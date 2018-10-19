@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Windows.Forms;
 using KrKrSceneManager;
 
@@ -32,9 +32,14 @@ namespace ScnEditorGUI {
                 ResourceMode = false;
                 listBox1.Items.Clear();
                 SCN = new PSBAnalyzer(System.IO.File.ReadAllBytes(fname));
+                
+                
                 foreach (string str in SCN.Import()) {
                     listBox1.Items.Add(str);
                 }
+                //增加到外部编辑器
+                System.IO.File.AppendAllLines(@"H:\YUZUSOFT\scn.txt", SCN.Import());
+
                 if (SCN.UnkOpCodes) {
                     MessageBox.Show("Maybe the reoder is wrong... try create a issue");
                 }
@@ -72,9 +77,14 @@ namespace ScnEditorGUI {
                 save.Filter = "KiriKiri Compiled Files | *.scn; *.psb|Pack of Resources | *.pimg";
                 DialogResult dr = save.ShowDialog();
                 if (dr == DialogResult.OK) {
+
+                    //狸猫换太子
+
+                    string[] AimString = System.IO.File.ReadAllLines(@"H:\YUZUSOFT\scn.txt");
                     string[] Strings = new string[listBox1.Items.Count];
                     for (int i = 0; i < Strings.Length; i++) {
-                        Strings[i] = listBox1.Items[i].ToString();
+                        //Strings[i] = listBox1.Items[i].ToString();
+                        Strings[i] = AimString[i].ToString();
                     }
                     dr = MessageBox.Show("Would you like to compress the script? (Recommended)\n\nDoes not work with old games.", "ScnEditorGUI", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
                     SCN.CompressPackget = dr == DialogResult.Yes;
@@ -294,6 +304,11 @@ namespace ScnEditorGUI {
             byte[] Content = System.IO.File.ReadAllBytes(fd.FileName);
             System.IO.File.WriteAllBytes(fd.FileName, PSBStrMan.ExtractMDF(Content));
             MessageBox.Show("Finished");
+        }
+
+        private void textBox1_TextChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }
